@@ -34,6 +34,12 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
     return bcrypt.compare(data, this.password);
 };
 
+// UserSchema.countDocuments({ a_model_field: 'match_value' }, function (err, count) {
+//     return count;
+//     // ... do something if there is an err
+//     // ... do something with the count if there was no error
+// });
+
 // Virtual for book's URL
 UserSchema
     .virtual('url')
