@@ -6,25 +6,26 @@ const MeetingSchema = new Schema(
     {
         title: { type: String, required: true, maxLength: 100 },
         description: { type: String },
-        start_time: { type: Date },
-        end_time: { type: Date }
+        startTime: { type: Date },
+        endTime: { type: Date },
+        createdAt: { type: Date, required: true }
     }
 );
 
-// Virtual for meeting title
-MeetingSchema
-    .virtual('title')
-    .get(function () {
-        return this.title;
-    });
+// // Virtual for meeting title
+// MeetingSchema
+//     .virtual('title')
+//     .get(function () {
+//         return this.title;
+//     });
 
 // Virtual for meeting date
 MeetingSchema
     .virtual('lifespan')
     .get(function () {
-        const year = this.start_time.getFullYear();
-        const month = this.start_time.getMonth();
-        const day = this.start_time.getDate();
+        const year = this.startTime.getFullYear();
+        const month = this.startTime.getMonth();
+        const day = this.startTime.getDate();
         return `${month}/${day}/${year}`;
     });
 

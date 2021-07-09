@@ -11,11 +11,11 @@ const SALT_WORK_FACTOR = 10;
 
 const UserSchema = new Schema(
     {
-        first_name: { type: String, required: true },
-        last_name: { type: String, required: true },
+        firstName: { type: String, required: true },
+        lastName: { type: String, required: true },
         email: { type: String, required: true, validate: [isEmail, 'invalid email'], index: { unique: true } },
         password: { type: String, required: true },
-        created_at: { type: Date, required: true }
+        createdAt: { type: Date, required: true }
     }
 );
 
@@ -40,7 +40,7 @@ UserSchema.methods.validatePassword = async function validatePassword(data) {
 //     // ... do something with the count if there was no error
 // });
 
-// Virtual for book's URL
+// Virtual for users URL
 UserSchema
     .virtual('url')
     .get(function () {

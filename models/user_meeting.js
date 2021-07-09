@@ -4,14 +4,14 @@ const { Schema } = mongoose;
 
 const UserMeetingSchema = new Schema(
     {
-        organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        participant: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        timeSlot: { type: String, required: true },
+        organizerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        meetingId: { type: Schema.Types.ObjectId, ref: 'Meeting', required: true }
 
     }
 );
 
-// Virtual for author's URL
+// Virtual for User Meeting URL
 UserMeetingSchema
     .virtual('url')
     .get(function () {

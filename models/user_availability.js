@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const UserAvailabilitySchema = new Schema(
     {
-        date: { type: Date, required: true },
-        timeSlot: { type: String, required: true },
-        user: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+        userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        timeslotStart: { type: String, required: true },
+        timeslotEnd: { type: String, required: true },
     }
 );
 

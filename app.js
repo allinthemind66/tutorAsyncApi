@@ -8,7 +8,7 @@ const cors = require("cors");
 // importing routes here
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-
+const meetingsRouter = require('./routes/meetings');
 
 
 const app = express();
@@ -40,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // setting our route base paths here
+app.use('/meetings', meetingsRouter);
 app.use('/users', usersRouter);
 app.use('/', indexRouter);
 

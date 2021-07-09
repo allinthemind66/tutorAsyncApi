@@ -9,10 +9,14 @@ const user_controller = require('../controllers/userController');
 // GET users home page.
 router.get('/', user_controller.index);
 
-// http://localhost:9000/users/create
 // GET request for creating a user. NOTE This must come before routes that display user (uses id).
 router.get('/create', user_controller.user_create_get);
 
+
+router.post('/login', user_controller.login);
+
+
+// http://localhost:9000/users/create
 // POST request for creating user.
 router.post('/create', user_controller.user_create_post);
 
