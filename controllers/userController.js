@@ -3,17 +3,6 @@ const async = require('async');
 const jwt = require('jsonwebtoken');
 
 
-// gets a count of existing users - KEEPING COMMENTED CODE FOR REFERENCE
-// exports.index = function (req, res) {
-//     async.parallel({
-//         user_count: function (callback) {
-//             User.countDocuments({}, callback); // Pass an empty object as match condition to find all documents of this collection
-//         },
-//     }, function (err, results) {
-//         res.json({ error: err, data: results });
-//     });
-// };
-
 exports.login = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -42,23 +31,6 @@ exports.login = async (req, res) => {
         console.log("Error is", err.message);
     });
 };
-
-// Display list of all Users.
-exports.user_list = function (req, res) {
-    res.send('NOT IMPLEMENTED: User list');
-};
-
-//
-// Details about a specific user - KEEPING COMMENTED CODE FOR LATER REFERENCE
-// exports.user_detail = function (req, res) {
-//     async.parallel({
-//         user_count: function (callback) {
-//             User.findById(req.params.id, callback); // Pass an empty object as match condition to find all documents of this collection
-//         },
-//     }, function (err, results) {
-//         res.json({ error: err, data: results });
-//     });
-// };
 
 
 // Handle User create on POST.

@@ -9,6 +9,7 @@ const cors = require("cors");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const meetingsRouter = require('./routes/meetings');
+const userAvailabilitiesRouter = require('./routes/user_availabilites');
 
 
 const app = express();
@@ -40,9 +41,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 // setting our route base paths here
-app.use('/meetings', meetingsRouter);
+// app.use('/meetings', meetingsRouter);
 app.use('/users', usersRouter);
 app.use('/', indexRouter);
+app.use('/meetings', meetingsRouter);
+app.use('/availabilites', userAvailabilitiesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

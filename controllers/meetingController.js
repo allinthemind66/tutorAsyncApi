@@ -1,4 +1,5 @@
 const Meeting = require("../models/meeting")
+const UserMeeting = require("../models/user_meeting")
 const async = require('async');
 const jwt = require('jsonwebtoken');
 
@@ -14,9 +15,18 @@ exports.index = function (req, res) {
     });
 };
 
-// Display list of all Meetings.
-exports.meeting_list = function (req, res) {
-    res.send('NOT IMPLEMENTED: Meeting list');
+// Display list of all Meetings specific to a user.
+exports.meeting_list = async (req, res) => {
+    const userId = req.body.userId;
+
+    // TODO: add check to NOT return data with missing user ID
+    await UserMeeting.find({ $or: [{ organizerId: userId }, { participantId: userId }] }).populate('meetingId')
+        .then(async userMeetings => {
+            res.json({
+                data: userMeetings
+            })
+            return listOfMeetings
+        }).then(response => res.json({ data: response }))
 };
 
 // Details about a specific Meeting
@@ -33,7 +43,48 @@ exports.meeting_detail = function (req, res) {
 
 // Handle Meeting create on POST.
 exports.meeting_create_post = async (req, res) => {
-    res.send('NOT IMPLEMENTED: Meeting create GET');
+
+
+    const { title, description, startTime, endTime, organizerUserId: organizerId, participantUserId: participantId } = req.body;
+
+    if (!title || !description || !startTime || !endTime || !organizerId || !participantId) {
+        res.status(500);
+        res.json({ error: "Missing data for create meeting" })
+    }
+
+    const newMeeting = new Meeting({
+        title,
+        description,
+        startTime,
+        endTime,
+        createdAt: Date.now()
+    })
+
+    await newMeeting.save().then(async databaseResponse => {
+        const { _id } = databaseResponse;
+        const newUserMeeting = new UserMeeting({
+            organizerId,
+            participantId,
+            meetingId: _id
+        })
+        await newUserMeeting
+            .save()
+            .then(() => {
+                // return empty body
+                res.json();
+            })
+            .catch(err => {
+                console.log("Issue creating a new user meeting relation. Error is ", err.message);
+                res.status(500);
+                // TODO: Delete newly created meeting if user_meeting save fails
+                res.json({ error: "Error creating user_meeting" })
+            })
+    })
+        .catch(err => {
+            console.log("Issue creating a new meeting. Error is ", err.message);
+            res.status(500);
+            res.json({ error: "Error creating meeting" })
+        })
 };
 
 
