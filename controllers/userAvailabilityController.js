@@ -4,14 +4,39 @@ const jwt = require('jsonwebtoken');
 
 
 
+
 // Display list of all availabilites specific to a user.
 exports.availability_list = async (req, res) => {
-    res.send('NOT IMPLEMENTED: User availability list');
+    const userId = req.body.userId;
+
+    // TODO: add check to NOT return data with missing user ID
+    await UserAvailability.find({ userId }).populate('meetingId')
+        .then(async userAvailabilities => {
+            res.json({
+                data: userAvailabilities
+            })
+        })
 };
 
 // Handle User availability create on POST.
 exports.availability_create_post = async (req, res) => {
-    res.send('NOT IMPLEMENTED: User availability create');
+    const userId = req.body.userId;
+    const timeslotStart = req.body.timeslotStart;
+    const timeslotEnd = req.body.timeslotEnd;
+
+    const newUserAvailability = new UserAvailability({
+        userId,
+        timeslotStart,
+        timeslotEnd,
+    }).save()
+        .then(() => {
+            res.json()
+        })
+        .catch(err => {
+            console.log("Issue creating a new user availability. Error is ", err.message);
+            res.status(500);
+            res.json({ error: "Error creating user_availability" })
+        })
 };
 
 
