@@ -9,4 +9,6 @@ router.post('/create', user_availability_controller.availability_create_post);
 
 router.get('/list', user_availability_controller.availability_list);
 
+router.post('/delete/:id', user_availability_controller.availability_delete_post);
+
 module.exports = router;

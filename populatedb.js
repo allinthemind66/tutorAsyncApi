@@ -1,6 +1,6 @@
 #! /usr/bin/env node
 
-console.log('This script populates some test books, authors, genres and bookinstances to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0.a9azn.mongodb.net/local_library?retryWrites=true');
+console.log('This script populates some mock data to your database. Specified database as argument - e.g.: populatedb mongodb+srv://cooluser:coolpassword@cluster0.a9azn.mongodb.net/local_library?retryWrites=true');
 
 // Get arguments passed on command line
 const userArgs = process.argv.slice(2);
@@ -16,6 +16,7 @@ const User = require('./models/user')
 const Meeting = require('./models/meeting')
 const UserMeeting = require('./models/user_meeting')
 const UserAvailability = require('./models/user_availability')
+const UserSubject = require('./models/user_subject')
 
 
 const mongoose = require('mongoose');
@@ -28,8 +29,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 const users = [];
 const meetings = [];
-const userMeetings = []
-const userAvailabilities = []
+const userMeetings = [];
+const userAvailabilities = [];
+const userSubjects = [];
 
 /* 
  * Creates a user object
@@ -74,11 +76,11 @@ function meetingCreate(title, description, startTime, endTime, cb) {
 /* 
  * Creates a user meeting object
  */
-function userMeetingCreate(organizerId, participantId, meetingId, cb) {
+function userMeetingCreate(organizer, participant, meeting, cb) {
     const userMeetingDetail = {
-        organizerId: organizerId,
-        participantId: participantId,
-        meetingId: meetingId
+        organizer: organizer,
+        participant: participant,
+        meeting: meeting
     }
 
     const userMeeting = new UserMeeting(userMeetingDetail);
@@ -96,9 +98,9 @@ function userMeetingCreate(organizerId, participantId, meetingId, cb) {
 /* 
  * Creates a user availability object
  */
-function userAvailabilityCreate(userId, timeslotStart, timeslotEnd, cb) {
+function userAvailabilityCreate(user, timeslotStart, timeslotEnd, cb) {
     const userAvailabilityDetail = {
-        userId: userId,
+        user: user,
         timeslotStart: timeslotStart,
         timeslotEnd: timeslotEnd
     }
@@ -112,6 +114,28 @@ function userAvailabilityCreate(userId, timeslotStart, timeslotEnd, cb) {
         console.log('New User Availability: ' + userAvailability);
         userAvailabilities.push(userAvailability)
         cb(null, userAvailability)
+    });
+}
+
+/* 
+ * Creates a user subject object
+ */
+function userSubjectCreate(user, subject, description, cb) {
+    const userSubjectDetail = {
+        user: user,
+        title: subject,
+        description: description
+    }
+
+    const userSubject = new UserSubject(userSubjectDetail);
+    userSubject.save(function (err) {
+        if (err) {
+            cb(err, null)
+            return
+        }
+        console.log('New User Subject: ' + userSubject);
+        userSubjects.push(userSubject)
+        cb(null, userSubject)
     });
 }
 
@@ -216,13 +240,39 @@ function createUserAvailabilities(cb) {
         cb);
 }
 
+function createUserSubjects(cb) {
+    async.parallel([
+        function (callback) {
+            userSubjectCreate(users[0], "Math", "I am available to teach Grade 10-12 Math", callback)
+        },
+        function (callback) {
+            userSubjectCreate(users[2], "English", "I am available to teach elementary english", callback)
+        },
+        function (callback) {
+            userSubjectCreate(users[3], "Music Theory", "I can help with college level music theory classes", callback)
+        },
+        function (callback) {
+            userSubjectCreate(users[4], "Calculus", "I am available to teach High School and College level Calculus", callback)
+        },
+        function (callback) {
+            userSubjectCreate(users[5], "Math", "I can teach Math grades 6-8", callback)
+        },
+        function (callback) {
+            userSubjectCreate(users[5], "Art", "I am available to teach you how to draw", callback)
+        },
+    ],
+        // Optional callback
+        cb);
+}
+
 
 
 async.series([
     createUsers,
     createMeetings,
     createUserMeetings,
-    createUserAvailabilities
+    createUserAvailabilities,
+    createUserSubjects
 ],
     // Optional callback
     function (err, results) {

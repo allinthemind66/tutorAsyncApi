@@ -15,7 +15,8 @@ const UserSchema = new Schema(
         lastName: { type: String, required: true },
         email: { type: String, required: true, validate: [isEmail, 'invalid email'], index: { unique: true } },
         password: { type: String, required: true },
-        createdAt: { type: Date, required: true }
+        createdAt: { type: Date, required: true },
+        imageUrl: { type: String, required: false }
     }
 );
 

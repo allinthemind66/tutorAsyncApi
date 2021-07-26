@@ -4,9 +4,9 @@ const { Schema } = mongoose;
 
 const UserMeetingSchema = new Schema(
     {
-        organizerId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        participantId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-        meetingId: { type: Schema.Types.ObjectId, ref: 'Meeting', required: true }
+        organizer: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        participant: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+        meeting: { type: Schema.Types.ObjectId, ref: 'Meeting', required: true }
 
     }
 );
