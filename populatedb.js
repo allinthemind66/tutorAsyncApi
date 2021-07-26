@@ -123,7 +123,7 @@ function userAvailabilityCreate(user, timeslotStart, timeslotEnd, cb) {
 function userSubjectCreate(user, subject, description, cb) {
     const userSubjectDetail = {
         user: user,
-        title: subject,
+        name: subject,
         description: description
     }
 

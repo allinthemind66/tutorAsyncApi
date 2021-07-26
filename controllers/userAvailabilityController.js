@@ -51,7 +51,7 @@ exports.availability_delete_post = async (req, res) => {
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
 
     await UserAvailability.deleteOne({ user, _id: meetingId }).then(async dbResponse => {
-        if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n > DELETED_AVAILABILITY_COUNT_ONE) {
+        if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n === DELETED_AVAILABILITY_COUNT_ONE) {
             res.send({ success: true });
             res.status(200)
         } else if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n > DELETED_AVAILABILITY_COUNT_ONE) {
