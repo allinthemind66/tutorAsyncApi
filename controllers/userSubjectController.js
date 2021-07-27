@@ -13,9 +13,9 @@ exports.user_subject_list = async (req, res) => {
 
     const userId = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH)); // TO DO implement authentication
 
-    await UserSubject.find({ title: subjectString }).populate("user").then(userSubjects => {
+    await UserSubject.find({ name: subjectString }).populate("user").then(userSubjects => {
         const subjects = userSubjects.map(subject => {
-            return { subject: subject.subjectTitle, user: { _id: subject.user._id, firstName: subject.user.firstName, lastName: subject.user.lastName } }
+            return { subject: subject.name, description: subject.description, user: { _id: subject.user._id, firstName: subject.user.firstName, lastName: subject.user.lastName } }
         })
         res.json({ data: { subjects } })
     }

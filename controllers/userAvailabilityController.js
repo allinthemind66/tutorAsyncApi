@@ -13,7 +13,7 @@ exports.availability_list = async (req, res) => {
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
 
     // TODO: add check to NOT return data with missing user ID
-    await UserAvailability.find({ user }).populate('meeting')
+    await UserAvailability.find({ user }).populate('meeting user')
         .then(async userAvailabilities => {
             res.json({
                 data: userAvailabilities
@@ -33,7 +33,8 @@ exports.availability_create_post = async (req, res) => {
         timeslotStart,
         timeslotEnd,
     }).save()
-        .then((availability) => {
+        .then(async (availability) => {
+            await UserAvailability.find({ _id: availability._id }).populate("user").then(response => res.json(response))
             res.json(availability)
         })
         .catch(err => {
