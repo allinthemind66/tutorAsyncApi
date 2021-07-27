@@ -59,10 +59,24 @@ exports.user_subject_create_post = async (req, res) => {
     })
 };
 
+exports.user_specific_subject_list = async (req, res) => {
+    const encryptedUserId = req.params.id;
+    const subjectString = req.query.subject;
+
+    const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH)); // TO DO implement authentication
+
+    await UserSubject.find({ user }).populate("user").then(userSubjects => {
+        const subjects = userSubjects.map(subject => {
+            return { _id: subject.id, subject: subject.name, description: subject.description, user: { _id: subject.user._id, firstName: subject.user.firstName, lastName: subject.user.lastName } }
+        })
+        res.json({ data: { subjects } })
+    }
+    );
+}
+
 
 // Handle availability delete on POST.
 exports.user_subject_delete_post = async (req, res) => {
-    // res.send('NOT IMPLEMENTED: subject delete POST');
     const userSubjectId = req.params.id;
     const encryptedUserId = req.body.user;
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
