@@ -8,18 +8,13 @@ const DELETE_SUCCESS_CODE = 1;
 const DELETED_ITEM_COUNT_ONE = 1;
 
 
-// gets a count of existing meetings
-exports.index = function (req, res) {
-    async.parallel({
-        meeting_count: function (callback) {
-            Meeting.countDocuments({}, callback); // Pass an empty object as match condition to find all documents of this collection
-        },
-    }, function (err, results) {
-        res.json({ error: err, data: results });
-    });
-};
 
-// Display list of all Meetings specific to a user.
+/**
+ * Displays a list of all meetings for a specific user.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.meeting_list = async (req, res) => {
     const encryptedUserId = req.query.id;
     const userId = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
@@ -83,10 +78,13 @@ exports.meeting_detail = function (req, res) {
 };
 
 
-// Handle Meeting create on POST.
+/**
+ * Handles creation of a meeting and a user meeting join
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.meeting_create_post = async (req, res) => {
-
-
     const { title, description, startTime, endTime, organizer, participant } = req.body;
 
     if (!title || !description || !startTime || !endTime || !organizer || !participant) {
@@ -130,7 +128,12 @@ exports.meeting_create_post = async (req, res) => {
 };
 
 
-// Handle Meeting delete on POST.
+/**
+ * Handles deletion of a meeting
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.meeting_delete_post = async (req, res) => {
     const userMeetingId = req.params.id;
     const encryptedUserId = req.body.user;

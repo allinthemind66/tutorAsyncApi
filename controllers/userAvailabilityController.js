@@ -7,7 +7,12 @@ const TOKEN_FORMAT_SLICE_LENGTH = 4;
 const DELETE_SUCCESS_CODE = 1;
 const DELETED_AVAILABILITY_COUNT_ONE = 1;
 
-// Display list of all availabilites specific to a user.
+/**
+ * Displays a list of all availabilites specific to a user.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.availability_list = async (req, res) => {
     const encryptedUserId = req.query.id;
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
@@ -21,7 +26,12 @@ exports.availability_list = async (req, res) => {
         })
 };
 
-// Handle User availability create on POST.
+/**
+ * Handles creation of availability for a specific user
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.availability_create_post = async (req, res) => {
     const encryptedUserId = req.body.user;
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
@@ -44,8 +54,12 @@ exports.availability_create_post = async (req, res) => {
         })
 };
 
-
-// Handle availability delete on POST.
+/**
+ * Handles deletion of an availability tied to a user
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.availability_delete_post = async (req, res) => {
     const meetingId = req.params.id;
     const encryptedUserId = req.body.user;

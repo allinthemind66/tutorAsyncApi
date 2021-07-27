@@ -7,7 +7,12 @@ const TOKEN_FORMAT_SLICE_LENGTH = 4;
 const DELETE_SUCCESS_CODE = 1;
 const DELETED_AVAILABILITY_COUNT_ONE = 1;
 
-// Display list of all availabilites specific to a user.
+/**
+ * Display list of all subjects by a specific name.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.user_subject_list = async (req, res) => {
 
     const encryptedUserId = req.query.id;
@@ -25,7 +30,12 @@ exports.user_subject_list = async (req, res) => {
 
 };
 
-// Handle User availability create on POST.
+/**
+ * Creates a new user subject association.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.user_subject_create_post = async (req, res) => {
     const encryptedUserId = req.body.user;
     const subject = req.body.subject;
@@ -59,10 +69,14 @@ exports.user_subject_create_post = async (req, res) => {
     })
 };
 
+/**
+ * Lists all subjects tied to a specific user
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.user_specific_subject_list = async (req, res) => {
     const encryptedUserId = req.params.id;
-    const subjectString = req.query.subject;
-
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH)); // TO DO implement authentication
 
     await UserSubject.find({ user }).populate("user").then(userSubjects => {
@@ -75,16 +89,17 @@ exports.user_specific_subject_list = async (req, res) => {
 }
 
 
-// Handle availability delete on POST.
+/**
+ * Deletes a user subject association
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.user_subject_delete_post = async (req, res) => {
     const userSubjectId = req.params.id;
     const encryptedUserId = req.body.user;
     const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
-    console.log(userSubjectId, " ", user)
 
-    // await UserSubject.find({ _id: userSubjectId }).then(async dbResponse => {
-    //     res.send(dbResponse)
-    // })
     await UserSubject.deleteOne({ user: user, _id: userSubjectId }).then(async dbResponse => {
         if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n === DELETED_AVAILABILITY_COUNT_ONE) {
             res.send({ success: true });

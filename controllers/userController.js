@@ -3,6 +3,12 @@ const async = require('async');
 const jwt = require('jsonwebtoken');
 
 
+/**
+ * Handles login authentication for user
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.login = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -33,7 +39,12 @@ exports.login = async (req, res) => {
 };
 
 
-// Handle User create on POST.
+/**
+ * Handles user creation upon user sign up
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
 exports.user_create_post = async (req, res) => {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
@@ -47,7 +58,6 @@ exports.user_create_post = async (req, res) => {
     if (!passwordsMatch) {
         res.status(500);
         res.json({ error: "Password and confirm password do not match!" })
-        return;
     }
 
 
