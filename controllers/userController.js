@@ -48,7 +48,6 @@ exports.user_create_post = async (req, res) => {
         res.status(500);
         res.json({ error: "Password and confirm password do not match!" })
         return;
-        // throw new Error("Password and confirm password do not match!")
     }
 
 

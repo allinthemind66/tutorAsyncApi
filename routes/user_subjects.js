@@ -9,4 +9,6 @@ router.post('/create', user_subject_controller.user_subject_create_post);
 
 router.get('/list', user_subject_controller.user_subject_list);
 
+router.post('/delete/:id', user_subject_controller.user_subject_delete_post);
+
 module.exports = router;

@@ -47,7 +47,6 @@ exports.meeting_list = async (req, res) => {
                 }
             });
             const upcomingMeetings = userMeetings.filter(userMeeting => userMeeting.meeting.startTime > currentDate).map(upcomingMeeting => {
-                console.log(upcomingMeeting.title, upcomingMeeting.description, upcomingMeeting)
                 return {
                     _id: upcomingMeeting._id,
                     meeting: {

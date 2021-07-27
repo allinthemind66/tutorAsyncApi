@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 
 
 const TOKEN_FORMAT_SLICE_LENGTH = 4;
+const DELETE_SUCCESS_CODE = 1;
+const DELETED_AVAILABILITY_COUNT_ONE = 1;
 
 // Display list of all availabilites specific to a user.
 exports.user_subject_list = async (req, res) => {
@@ -15,7 +17,7 @@ exports.user_subject_list = async (req, res) => {
 
     await UserSubject.find({ name: subjectString }).populate("user").then(userSubjects => {
         const subjects = userSubjects.map(subject => {
-            return { subject: subject.name, description: subject.description, user: { _id: subject.user._id, firstName: subject.user.firstName, lastName: subject.user.lastName } }
+            return { _id: subject.id, subject: subject.name, description: subject.description, user: { _id: subject.user._id, firstName: subject.user.firstName, lastName: subject.user.lastName } }
         })
         res.json({ data: { subjects } })
     }
@@ -59,6 +61,30 @@ exports.user_subject_create_post = async (req, res) => {
 
 
 // Handle availability delete on POST.
-exports.user_subject_delete_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: subject delete POST');
+exports.user_subject_delete_post = async (req, res) => {
+    // res.send('NOT IMPLEMENTED: subject delete POST');
+    const userSubjectId = req.params.id;
+    const encryptedUserId = req.body.user;
+    const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
+    console.log(userSubjectId, " ", user)
+
+    // await UserSubject.find({ _id: userSubjectId }).then(async dbResponse => {
+    //     res.send(dbResponse)
+    // })
+    await UserSubject.deleteOne({ user: user, _id: userSubjectId }).then(async dbResponse => {
+        if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n === DELETED_AVAILABILITY_COUNT_ONE) {
+            res.send({ success: true });
+            res.status(200)
+        } else if (dbResponse.ok === DELETE_SUCCESS_CODE && dbResponse.n !== DELETED_AVAILABILITY_COUNT_ONE) {
+            res.send({ success: false, error: "No user subject deleted, but DB response OK" });
+            res.status(200)
+        } else {
+            res.send({ success: false, error: "Error deleting user_subject: ", dbResponse });
+            res.status(500)
+        }
+    }).catch(err => {
+        console.log("Issue deleting a user subject. Error is ", err.message);
+        res.status(500);
+        res.json({ error: "Error deleting user_subject" })
+    })
 };
