@@ -42,10 +42,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// setting our route base paths here
-// app.use('/meetings', meetingsRouter);
-app.use('/users', usersRouter);
+// APPLICATION ROUTES
 app.use('/', indexRouter);
+app.use('/users', usersRouter);
 app.use('/meetings', meetingsRouter);
 app.use('/availabilites', userAvailabilitiesRouter);
 app.use('/subjects', userSubjectsRouter);

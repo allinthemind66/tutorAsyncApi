@@ -1,11 +1,8 @@
 const UserAvailability = require("../models/user_availability")
 const async = require('async');
 const jwt = require('jsonwebtoken');
+const { TOKEN_FORMAT_SLICE_LENGTH, DELETE_SUCCESS_CODE, DELETED_AVAILABILITY_COUNT_ONE } = require("./controllerConstants")
 
-
-const TOKEN_FORMAT_SLICE_LENGTH = 4;
-const DELETE_SUCCESS_CODE = 1;
-const DELETED_AVAILABILITY_COUNT_ONE = 1;
 
 /**
  * Displays a list of all availabilites specific to a user.
