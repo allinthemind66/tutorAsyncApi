@@ -1,4 +1,5 @@
 const UserAvailability = require("../models/user_availability")
+const User = require("../models/user")
 const async = require('async');
 const jwt = require('jsonwebtoken');
 const { TOKEN_FORMAT_SLICE_LENGTH, DELETE_SUCCESS_CODE, DELETED_AVAILABILITY_COUNT_ONE } = require("./controllerConstants")
@@ -21,6 +22,44 @@ exports.availability_list = async (req, res) => {
                 data: userAvailabilities
             })
         })
+};
+
+/**
+ * Displays a list of all availabilites specific to another user by their id.
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+exports.user_availability_list = async (req, res) => {
+    const encryptedUserId = req.query.id;
+    const user = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
+    const userId = req.params.id;
+    await User.find({ user }).then(async user => {
+        if (user) {
+            await UserAvailability.find({ user: userId }).populate('meeting user')
+                .then(async userAvailabilities => {
+                    res.json({
+                        data: userAvailabilities
+                    })
+                }).catch(err => {
+                    res.status(500);
+                    res.json({
+                        error: err
+                    })
+                })
+        } else {
+            res.status(500);
+            res.json({
+                error: "User not authorized"
+            })
+        }
+    }).catch(err => {
+        res.status(500);
+        res.json({
+            message: "Issue fetching user auth",
+            error: err
+        })
+    })
 };
 
 /**
