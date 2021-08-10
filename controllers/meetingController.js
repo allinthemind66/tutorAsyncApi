@@ -16,7 +16,7 @@ exports.meeting_list = async (req, res) => {
     const userId = jwt.decode(encryptedUserId.slice(TOKEN_FORMAT_SLICE_LENGTH));
 
     // TODO: add check to NOT return data with missing user ID
-    await UserMeeting.find({ $or: [{ organizer: userId }, { participant: userId }] }).populate('meeting participant')
+    await UserMeeting.find({ $or: [{ organizer: userId }, { participant: userId }] }).populate('meeting participant organizer')
         .then(async userMeetings => {
             const currentDate = Date.now();
 
@@ -34,6 +34,11 @@ exports.meeting_list = async (req, res) => {
                         firstName: pastMeeting.participant.firstName,
                         lastName: pastMeeting.participant.lastName,
                         _id: pastMeeting.participant._id
+                    },
+                    organizer: {
+                        firstName: pastMeeting.organizer.firstName,
+                        lastName: pastMeeting.organizer.lastName,
+                        _id: pastMeeting.organizer._id
                     }
                 }
             });
@@ -51,6 +56,11 @@ exports.meeting_list = async (req, res) => {
                         firstName: upcomingMeeting.participant.firstName,
                         lastName: upcomingMeeting.participant.lastName,
                         _id: upcomingMeeting.participant._id
+                    },
+                    organizer: {
+                        firstName: upcomingMeeting.organizer.firstName,
+                        lastName: upcomingMeeting.organizer.lastName,
+                        _id: upcomingMeeting.organizer._id
                     }
                 }
             });
@@ -82,11 +92,11 @@ exports.meeting_detail = function (req, res) {
  */
 exports.meeting_create_post = async (req, res) => {
     const { title, description, startTime, endTime, organizer, participant } = req.body;
-
     if (!title || !description || !startTime || !endTime || !organizer || !participant) {
         res.status(500);
         res.json({ error: "Missing data for create meeting" })
     }
+    const userId = jwt.decode(organizer.slice(TOKEN_FORMAT_SLICE_LENGTH));
 
     const newMeeting = new Meeting({
         title,
@@ -99,7 +109,7 @@ exports.meeting_create_post = async (req, res) => {
     await newMeeting.save().then(async databaseResponse => {
         const { _id } = databaseResponse;
         const newUserMeeting = new UserMeeting({
-            organizer,
+            organizer: userId,
             participant,
             meeting: _id
         })
