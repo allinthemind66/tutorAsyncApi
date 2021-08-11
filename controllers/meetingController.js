@@ -1,5 +1,6 @@
 const Meeting = require("../models/meeting")
 const UserMeeting = require("../models/user_meeting")
+const UserAvailability = require("../models/user_availability")
 const async = require('async');
 const jwt = require('jsonwebtoken');
 const { TOKEN_FORMAT_SLICE_LENGTH, DELETE_SUCCESS_CODE, DELETED_AVAILABILITY_COUNT_ONE } = require("./controllerConstants")
@@ -91,11 +92,12 @@ exports.meeting_detail = function (req, res) {
  * @param {*} res 
  */
 exports.meeting_create_post = async (req, res) => {
-    const { title, description, startTime, endTime, organizer, participant } = req.body;
-    if (!title || !description || !startTime || !endTime || !organizer || !participant) {
+    const { title, description, startTime, endTime, organizer, participant, availabilityId } = req.body;
+    if (!title || !description || !startTime || !endTime || !organizer || !participant || !availabilityId) {
         res.status(500);
         res.json({ error: "Missing data for create meeting" })
     }
+
     const userId = jwt.decode(organizer.slice(TOKEN_FORMAT_SLICE_LENGTH));
 
     const newMeeting = new Meeting({
@@ -115,8 +117,9 @@ exports.meeting_create_post = async (req, res) => {
         })
         await newUserMeeting
             .save()
-            .then(() => {
-                // return empty body
+            .then(async resp => {
+                // delete user availability once meeting has been created
+                await UserAvailability.deleteOne({ _id: availabilityId })
                 res.json();
             })
             .catch(err => {
